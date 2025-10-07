@@ -1,5 +1,6 @@
 publish: true
-type: project
+type: simulation
 dockerCompose:
-  theia: controllers/robot_controller
+  theia: controllers/robot_controller/
+
 
