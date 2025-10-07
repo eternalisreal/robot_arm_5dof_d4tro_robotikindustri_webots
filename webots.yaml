@@ -1,5 +1,5 @@
-# Webots Cloud simulation configuration
 version: R2023b
 worlds:
   - worlds/robot_workspace.wbt
+
 
