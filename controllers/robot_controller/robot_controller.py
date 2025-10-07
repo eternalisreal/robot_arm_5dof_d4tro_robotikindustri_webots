@@ -1,23 +1,33 @@
 from controller import Robot
 
+TIME_STEP = 32
 robot = Robot()
-timestep = int(robot.getBasicTimeStep())
 
-# Ambil joint berdasarkan nama di MyRobotArm.proto (nanti disesuaikan)
-base = robot.getDevice('joint_base')
-extension = robot.getDevice('joint_extension')
-shoulder = robot.getDevice('joint_shoulder')
-wrist_pitch = robot.getDevice('joint_wrist_pitch')
-wrist_roll = robot.getDevice('joint_wrist_roll')
+# Inisialisasi motor
+motors = [
+    robot.getDevice("base_motor"),
+    robot.getDevice("extend_motor"),
+    robot.getDevice("shoulder_motor"),
+    robot.getDevice("wrist_pitch_motor"),
+    robot.getDevice("wrist_roll_motor")
+]
 
-# Inisialisasi posisi
-for joint in [base, extension, shoulder, wrist_pitch, wrist_roll]:
-    joint.setPosition(0.0)
+# Set posisi awal motor
+motors[0].setPosition(0.0)
+motors[2].setPosition(0.0)
+motors[3].setPosition(0.0)
+motors[4].setPosition(0.0)
 
-while robot.step(timestep) != -1:
-    # Contoh animasi sederhana (bisa dihapus nanti)
-    base.setPosition(3.14)
-    extension.setPosition(0.05)
-    shoulder.setPosition(0.7)
-    wrist_pitch.setPosition(-0.5)
-    wrist_roll.setPosition(1.57)
+# Aktifkan mode kontrol posisi
+for motor in motors:
+    motor.setVelocity(1.0)
+
+print("Robot controller aktif - menjalankan pergerakan otomatis")
+
+# Gerakan sederhana bolak-balik
+while robot.step(TIME_STEP) != -1:
+    t = robot.getTime()
+    motors[0].setPosition(1.5 * (1 if int(t) % 4 < 2 else -1))
+    motors[2].setPosition(0.5 * (1 if int(t) % 4 < 2 else -1))
+    motors[3].setPosition(0.3 * (1 if int(t) % 4 < 2 else -1))
+    motors[4].setPosition(1.0 * (1 if int(t) % 4 < 2 else -1))
