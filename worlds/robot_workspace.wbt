@@ -2,30 +2,28 @@
 WorldInfo {
   basicTimeStep 32
 }
+
 Viewpoint {
-  orientation -0.3 0.9 0.3 1.2
-  position 1.0 1.0 1.0
+  orientation -0.3 1 0 2.8
+  position 1.0 0.5 1.5
 }
+
 TexturedBackground {}
 TexturedBackgroundLight {}
 
-# Meja sederhana
+# Meja
 Solid {
   translation 0 0 0
   children [
     Shape {
-      geometry Box {
-        size 0.6 0.02 0.6
-      }
-      appearance PBRAppearance {
-        baseColor 0.5 0.3 0.2
-      }
+      appearance PBRAppearance { baseColor 0.4 0.25 0.1 }
+      geometry Box { size 0.8 0.02 0.8 }
     }
   ]
-  name "table"
 }
 
-# Robot arm
+# Robot Arm
 MyRobotArm {
   translation 0 0.02 0
+  controller "robot_controller"
 }
