@@ -1,1 +1,146 @@
-# Placeholder: MyRobotArm.proto akan digenerate setelah ini.
+#VRML_SIM R2023b utf8
+PROTO MyRobotArm [
+  field SFVec3f translation 0 0 0
+  field SFRotation rotation 0 1 0 0
+]
+{
+  Robot {
+    translation IS translation
+    rotation IS rotation
+    children [
+
+      # Base (rotasi 360°)
+      HingeJoint {
+        jointParameters HingeJointParameters {
+          axis 0 1 0
+        }
+        device [
+          RotationalMotor { name "joint_base" }
+          PositionSensor { name "joint_base_sensor" }
+        ]
+        endPoint Transform {
+          translation 0 0 0
+          children [
+            Solid {
+              translation 0 0.05 0
+              children [
+                Shape {
+                  geometry Cylinder { height 0.1 radius 0.1 }
+                  appearance Appearance {
+                    material Material { diffuseColor 0.3 0.3 0.3 }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+
+      # DOF 2: Linear extension / prismatic joint
+      # Webots tidak punya PrismaticJoint bawaan, tapi bisa di-simulasikan dengan
+      # kombinasi Hinge + Transform, atau dengan penggunaan “LinearMotor” (jika ada).
+      # Di contoh ini, kita kira-kira model sederhana dengan Transform dan joint dummy:
+
+      # (contoh implementasi sederhana)
+      HingeJoint {
+        jointParameters HingeJointParameters {
+          # axis doesn’t matter (zero movement), gunakan sebagai dummy joint
+          axis 0 0 1
+        }
+        device [
+          RotationalMotor { name "joint_extension" }
+          PositionSensor { name "joint_extension_sensor" }
+        ]
+        endPoint Transform {
+          translation 0 0.1 0  # offset awal
+          children [
+            Solid {
+              translation 0 0.1 0
+              children [
+                Shape {
+                  geometry Box { size 0.05 0.2 0.05 }
+                  appearance Appearance {
+                    material Material { diffuseColor 0.2 0.8 0.2 }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+
+      # DOF 3: Shoulder pitch (gerak depan + belakang)
+      HingeJoint {
+        jointParameters HingeJointParameters {
+          axis 1 0 0
+          minPosition -0.5236    # -30° dalam radian
+          maxPosition 0.8727     # +50° dalam radian
+        }
+        device [
+          RotationalMotor { name "joint_shoulder" }
+          PositionSensor { name "joint_shoulder_sensor" }
+        ]
+        endPoint Solid {
+          translation 0 0.3 0
+          children [
+            Shape {
+              geometry Box { size 0.05 0.2 0.05 }
+              appearance Appearance {
+                material Material { diffuseColor 0.8 0.2 0.2 }
+              }
+            }
+          ]
+        }
+      }
+
+      # DOF 4: Wrist pitch
+      HingeJoint {
+        jointParameters HingeJointParameters {
+          axis 1 0 0
+          minPosition -0.7854  # -45°
+          maxPosition 0.7854   # +45°
+        }
+        device [
+          RotationalMotor { name "joint_wrist_pitch" }
+          PositionSensor { name "joint_wrist_pitch_sensor" }
+        ]
+        endPoint Solid {
+          translation 0 0.5 0
+          children [
+            Shape {
+              geometry Box { size 0.04 0.15 0.04 }
+              appearance Appearance {
+                material Material { diffuseColor 0.2 0.2 0.8 }
+              }
+            }
+          ]
+        }
+      }
+
+      # DOF 5: Wrist roll (rotasi pada sumbu panjang)
+      HingeJoint {
+        jointParameters HingeJointParameters {
+          axis 0 0 1
+        }
+        device [
+          RotationalMotor { name "joint_wrist_roll" }
+          PositionSensor { name "joint_wrist_roll_sensor" }
+        ]
+        endPoint Solid {
+          translation 0 0.65 0
+          children [
+            Shape {
+              geometry Cylinder { height 0.1 radius 0.02 }
+              appearance Appearance {
+                material Material { diffuseColor 0.8 0.8 0.2 }
+              }
+            }
+          ]
+        }
+      }
+
+    ]
+
+    controller "robot_controller"
+  }
+}
